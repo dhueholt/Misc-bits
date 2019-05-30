@@ -1,29 +1,31 @@
-""" Pre-written test for VIIRS EDR product """
+""" Test for VIIRS EDR product
+    Author(s): Daniel Hueholt @dmhuehol GitHub
+"""
 from glob import glob
+# import time as t
 import matplotlib.pyplot as plt
-import time as t
 from satpy import Scene
 
-filenames = glob('/Users/dhueholt/Documents/Data/test/*20190201*.h5')
+FILENAMES = glob('/Users/dhueholt/Documents/Data/AOD/*AOD*.nc')
 # print(filenames)
 # t.sleep(2)
 # print("Continuing")
 
-scn = Scene(reader='viirs_gran', filenames=filenames)
-scn.load(['AOD'])
-my_area = scn['AOD'].attrs['area'].compute_optimal_bb_area({'proj': 'lcc', 'lon_0': -95.,
-                                                            'lat_0': 25., 'lat_1': 25.,
-                                                            'lat_2': 25.})
-new_scn = scn.resample(my_area)
+SCN = Scene(reader='viirs_gran', filenames=FILENAMES)
+SCN.load(['aod550'])
+MY_AREA = SCN['aod550'].attrs['area'].compute_optimal_bb_area({'proj': 'lcc', 'lon_0': -95.,
+                                                               'lat_0': 25., 'lat_1': 25.,
+                                                               'lat_2': 25.})
+NEW_SCN = SCN.resample(MY_AREA)
 
-crs = new_scn['AOD'].attrs['area'].to_cartopy_crs()
-ax = plt.axes(projection=crs)
+CRS = NEW_SCN['aod550'].attrs['area'].to_cartopy_crs()
+AX = plt.axes(projection=CRS)
 
-ax.coastlines()
-ax.gridlines()
-ax.set_global()
-plt.imshow(new_scn['AOD'], transform=crs, extent=crs.bounds, origin='upper')
-cbar = plt.colorbar()
-cbar.set_label("AOD")
+AX.coastlines()
+AX.gridlines()
+AX.set_global()
+plt.imshow(NEW_SCN['aod550'], transform=CRS, extent=CRS.bounds, origin='upper')
+CBAR = plt.colorbar()
+CBAR.set_label("aod550")
 #plt.show()
 plt.savefig('/Users/dhueholt/Documents/Hollings_2019/AOD_test.png')
