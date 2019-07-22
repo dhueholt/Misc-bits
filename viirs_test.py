@@ -2,6 +2,8 @@ from satpy import Scene
 from glob import glob
 import matplotlib.pyplot as plt
 import time as t
+import pdb
+import cartopy.crs as ccrs
 
 filenames = glob('/Users/dhueholt/Documents/Data/test/*20190201*.h5')
 # print(filenames)
@@ -14,7 +16,9 @@ my_area = scn['I04'].attrs['area'].compute_optimal_bb_area({'proj': 'lcc', 'lon_
 new_scn = scn.resample(my_area)
 
 crs = new_scn['I04'].attrs['area'].to_cartopy_crs()
-ax = plt.axes(projection=crs)
+lambert_proj = ccrs.LambertConformal()
+ax = plt.axes(projection=lambert_proj)
+# ax = plt.axes(projection=crs)
 
 ax.coastlines()
 ax.gridlines()
